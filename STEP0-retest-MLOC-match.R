@@ -1,36 +1,70 @@
+### Purpose of this script:
+# preprocessing the Chinese data
+
+### Input:
+# "3_2_1_Standardized_Data/MLOC0804.csv"
+# "3_2_1_Standardized_Data//Q0804.csv"
+#
+
+### Ouput:
+# "3_2_1_Standardized_Data/CHN_retest_Q0804_MLOC.csv"
+
+### prepare the packages
+
 rm(list = ls())
 
-# change to relative path
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_1_Standardized_Data")
+# install.packages("pacman") if not installed
+if (!requireNamespace('pacman', quietly = TRUE)) {
+      install.packages('pacman')
+}
 
-MLOC_data <- read.csv("MLOC0804.csv")
+# using pacman for loading packages
+pacman::p_load(tidyverse, here) # use here for directory management
 
-#colnames(MLOC_data)
-#take the variables names, "Q139" - mails
-MLOC_data_names <- c("Q1.ID", "Q2.name" , "Q139","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4" )
+# define the data dir within the R Proj
+data_dir <- here::here("3_2_1_Standardized_Data")
+
+MLOC_data <- read.csv(here::here(data_dir,"MLOC0804.csv"))
+
+# colnames(MLOC_data)
+# take the variables names, "Q139" - mails
+MLOC_data_names <- c("Q1.ID", "Q2.name" , "Q139","MLOC.1.4_1",
+                     "MLOC.1.4_2",   "MLOC.1.4_3",   "MLOC.1.4_4",
+                     "MLOC.5.8_1",   "MLOC.5.8_2",   "MLOC.5.8_3",
+                     "MLOC.5.8_4",   "MLOC.9.12_1",  "MLOC.9.12_2",
+                     "MLOC.9.12_3",  "MLOC.9.12_4",  "MLOC.13.16_1",
+                     "MLOC.13.16_2", "MLOC.13.16_3", "MLOC.13.16_4",
+                     "MLOC.17.20_1", "MLOC.17.20_2", "MLOC.17.20_3",
+                     "MLOC.17.20_4", "MLOC.21.24_1", "MLOC.21.24_2",
+                     "MLOC.21.24_3", "MLOC.21.24_4" )
 
 MLOC <- MLOC_data[,MLOC_data_names]
 
 MLOCrecode <- function(v){
   v[which(v=="很不同意")] <- -3
-  v[which(v=="不同意")] <- -2
+  v[which(v=="不同意")]   <- -2
   v[which(v=="不太同意")] <- -1
   v[which(v=="基本同意")] <- 1
-  v[which(v=="同意")] <- 2
-  v[which(v=="很同意")] <- 3
+  v[which(v=="同意")]     <- 2
+  v[which(v=="很同意")]   <- 3
   return(v)
 }
 
 MLOC_recode <- t(apply(MLOC, 1, MLOCrecode))
 
 cleaning_OmissionSames_MLOC <- function(m){
-  MLOCnames <- c("MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
+  MLOCnames <- c("MLOC.1.4_1",   "MLOC.1.4_2",   "MLOC.1.4_3",   "MLOC.1.4_4",
+                 "MLOC.5.8_1",   "MLOC.5.8_2",   "MLOC.5.8_3",   "MLOC.5.8_4",
+                 "MLOC.9.12_1",  "MLOC.9.12_2",  "MLOC.9.12_3",  "MLOC.9.12_4",
+                 "MLOC.13.16_1", "MLOC.13.16_2", "MLOC.13.16_3", "MLOC.13.16_4",
+                 "MLOC.17.20_1", "MLOC.17.20_2", "MLOC.17.20_3", "MLOC.17.20_4",
+                 "MLOC.21.24_1", "MLOC.21.24_2", "MLOC.21.24_3", "MLOC.21.24_4")
   mMLOC <- m[,MLOCnames]
   num_MLOC <- apply(mMLOC, 2, as.numeric)
   cleaning01 <-function(v){   
     if (length(v!=24)) res <- 0 
-    if (anyNA(v)==T) res <- 0 #detect cases with NA
-    else {fretable <- table(v) #detect cases with same responses
+    if (anyNA(v)==T) res <- 0  # detect cases with NA
+    else {fretable <- table(v) # detect cases with same responses
     frenvm <- length(fretable)
     if (frenvm<=1) res <- 0
     else res <- 1}
@@ -58,52 +92,76 @@ find_dup_loc <- function(v){
 
 cleaned_MLOC[unlist((find_dup_loc(cleaned_MLOC[,1]))),]
 
-#delete subjects with invalid ID, and repeat responses
-#6313 - 2 subject all valid, 发放被试编号时重复。
+# delete subjects with invalid ID, and repeat responses
+# 6313 - 2 subject all valid, 发放被试编号时重复。
 fin_MLOC <- cleaned_MLOC[-c(1,74,83,95,161,176),]
 length(fin_MLOC[,1])
 
-#recode 6313, 将hmz1969 被试编号改为 2313
+# recode 6313, 将hmz1969 被试编号改为 2313
 which(fin_MLOC[,"Q1.ID"]=="6313")
 fin_MLOC[which(fin_MLOC[,"Q1.ID"]=="6313")[2],"Q1.ID"] <- "2313"
 
+# colnames(qdata_checked)
+names_ori_used <- c("Q1.ID","Q139","times","Q3.gender","Q4.age",
+                    "Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.",
+                    "Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad",
+                    "Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5",
+                    "FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11",
+                    "FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17",
+                    "FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23",
+                    "FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27",
+                    "BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4",
+                    "BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3",
+                    "BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2",
+                    "BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1",
+                    "BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5",
+                    "BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4",
+                    "BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3",
+                    "BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2",
+                    "BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1",
+                    "BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5",
+                    "BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4",
+                    "BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3",
+                    "BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2",
+                    "BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1",
+                    "BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5",
+                    "Q140_1","Q140_2","Q140_3","Q140_4","MLOC.5.8_1","MLOC.5.8_2",
+                    "MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2",
+                    "MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2",
+                    "MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2",
+                    "MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1",
+                    "MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
 
+# read qualtrics retest data 
+qdata_selected <- read.csv(here::here(data_dir, "Q0804.csv")) %>%
+      dplyr::filter(check.1 == "不合理" & check.2 == "6") %>%
+      dplyr::select(tidyselect::all_of(names_ori_used))
 
-
-
-
-#read qualtris retest data 
-qdata <- read.csv("Q0804.csv")
 qdata_checked <- qdata[which(qdata[,"check.1"]=="不合理"& qdata[,"check.2"]=="6"),]
-
-#colnames(qdata_checked)
-names_ori_used <- c("Q1.ID","Q139","times","Q3.gender","Q4.age","Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","Q140_1","Q140_2","Q140_3","Q140_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
-
-qdata_selected <- qdata_checked[,names_ori_used]
+qdata_selected <- qdata_checked[, names_ori_used]
 
 find_dup_loc(qdata_selected[,"Q1.ID"])
 q_dup_ID <- unique(find_dup_loc(qdata_selected[,"Q1.ID"]))
 
 
-#6313  编号重复，不是同一人 loc： 113 183, 与MLOC data保持一致
+# 313  编号重复，不是同一人 loc： 113 183, 与MLOC data保持一致
 qdata_selected[183,]
 qdata_selected[183,"Q1.ID"] <- 2313
 
 
-#loc:38,116,133  被试编号为空，且loc38，无被试编号与邮箱-将被删除
+# loc:38,116,133  被试编号为空，且loc38，无被试编号与邮箱-将被删除
 qdata_selected[q_dup_ID[[7]][1],]
 qdata_selected[38,]
 
-#根据邮箱信息查表，得被试编号
+# 根据邮箱信息查表，得被试编号
 qdata_selected[q_dup_ID[[7]][2],"Q1.ID"] <- 605
 qdata_selected[q_dup_ID[[7]][3],"Q1.ID"] <- 667
 
 qdata_selected_IDnoNA <- qdata_selected[-38,]
 
-
 q_dup_ID_final <- unique(find_dup_loc(qdata_selected_IDnoNA[,"Q1.ID"]))
 
-#loc:144 147 148  同一被试填写三次
+# loc:144 147 148  同一被试填写三次
 qdata_selected_IDnoNA[q_dup_ID_final[[7]],]
 
 showresponse <- function(v,m){
@@ -113,15 +171,23 @@ showresponse <- function(v,m){
 
 q_needcheckresponse <- lapply(q_dup_ID_final, showresponse,m=qdata_selected_IDnoNA)
 
-q_needcheckresponse[[15]]#1:15组 这里根据每一个重复的被试编号进行了源数据的查看，根据填写时间的顺序，选择删除填写较后的作答
+q_needcheckresponse[[15]] # 1:15组 这里根据每一个重复的被试编号进行了源数据的查看，根据填写时间的顺序，选择删除填写较后的作答
 
-delete_loc <- c(q_dup_ID_final[[1]][2],q_dup_ID_final[[2]][2],q_dup_ID_final[[3]][2],q_dup_ID_final[[4]][2],q_dup_ID_final[[5]][2],q_dup_ID_final[[6]][2],q_dup_ID_final[[7]][c(2,3)],q_dup_ID_final[[8]][2],q_dup_ID_final[[9]][2],q_dup_ID_final[[10]][1],q_dup_ID_final[[11]][2],q_dup_ID_final[[12]][1],q_dup_ID_final[[13]][2],q_dup_ID_final[[14]][1],q_dup_ID_final[[15]][1])
+delete_loc <- c(q_dup_ID_final[[1]][2], q_dup_ID_final[[2]][2], q_dup_ID_final[[3]][2],
+                q_dup_ID_final[[4]][2], q_dup_ID_final[[5]][2],q_dup_ID_final[[6]][2],
+                q_dup_ID_final[[7]][c(2,3)],q_dup_ID_final[[8]][2],q_dup_ID_final[[9]][2],
+                q_dup_ID_final[[10]][1],q_dup_ID_final[[11]][2],q_dup_ID_final[[12]][1],
+                q_dup_ID_final[[13]][2],q_dup_ID_final[[14]][1],q_dup_ID_final[[15]][1])
 
 
 qdata_nodup <- qdata_selected_IDnoNA[-delete_loc,]
 
-
-qdata_all_MLOC <- qdata_nodup[,c("Q140_1","Q140_2","Q140_3","Q140_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")]
+qdata_all_MLOC <- qdata_nodup[, c("Q140_1","Q140_2","Q140_3","Q140_4", 
+                                  "MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4",
+                                  "MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4",
+                                  "MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4",
+                                  "MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4",
+                                  "MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")]
 
 ori_MLOC_recode <- t(apply(qdata_all_MLOC, 1, MLOCrecode))
 
@@ -135,14 +201,21 @@ qdata_missed_MLOC <- qdata_nodup[1:forMLOCsublength,]
 
 matchedMLOC_ID <- (match(qdata_missed_MLOC[,"Q1.ID"],fin_MLOC[,"Q1.ID"]))
 
-length(which(is.na(matchedMLOC_ID))) #22人MLOC数据未回收到
+length(which(is.na(matchedMLOC_ID))) # 22人MLOC数据未回收到
 
-#where marked no match MLOC data as 0 - 22subjects
+# where marked no match MLOC data as 0 - 22subjects
 findMLOCdata <- function(n){
   MLOC_loc <- match(n,fin_MLOC[,"Q1.ID"])
   if (is.na(MLOC_loc))  MLOC_res <- rep(0,times=24)
   else
-  MLOC_res <- fin_MLOC[MLOC_loc,c("MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4" )]
+  MLOC_res <- fin_MLOC[MLOC_loc,c("MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3",
+                                  "MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2",
+                                  "MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1",
+                                  "MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4",
+                                  "MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3",
+                                  "MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2",
+                                  "MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1",
+                                  "MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4" )]
   return(MLOC_res)
 }
 
@@ -150,7 +223,38 @@ MLOCdata_IDmatched_qdata_missed <- t(mapply(findMLOCdata,qdata_missed_MLOC[,"Q1.
 
 dim(MLOCdata_IDmatched_qdata_missed)
 
-qdata_uni_final <- cbind(qdata_nodup[1:forMLOCsublength,c("Q1.ID","Q139","times","Q3.gender","Q4.age","Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5")],MLOCdata_IDmatched_qdata_missed)
+qdata_uni_final <- cbind(qdata_nodup[1:forMLOCsublength,c("Q1.ID","Q139","times",
+                                                          "Q3.gender","Q4.age","Q5.ethnic.groups",
+                                                          "Q6.educational.atta.","Q7.SES.",
+                                                          "Q8.objSES_1","Q9.subSES_1","Q10.abroad",
+                                                          "Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.",
+                                                          "FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6",
+                                                          "FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10",
+                                                          "FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14",
+                                                          "FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18",
+                                                          "FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22",
+                                                          "FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26",
+                                                          "FAD.Q27","BFI.1.5._1","BFI.1.5._2",
+                                                          "BFI.1.5._3","BFI.1.5._4","BFI.1.5._5",
+                                                          "BFI.6.10._1","BFI.6.10._2","BFI.6.10._3",
+                                                          "BFI.6.10._4","BFI.6.10._5","BFI.11.15._1",
+                                                          "BFI.11.15._2","BFI.11.15._3","BFI.11.15._4",
+                                                          "BFI.11.15._5","BFI.16.20_1","BFI.16.20_2",
+                                                          "BFI.16.20_3","BFI.16.20_4","BFI.16.20_5",
+                                                          "BFI.21.25_1","BFI.21.25_2","BFI.21.25_3",
+                                                          "BFI.21.25_4","BFI.21.25_5","BFI.26.30_1",
+                                                          "BFI.26.30_2","BFI.26.30_3","BFI.26.30_4",
+                                                          "BFI.26.30_5","BFI.31.45_1","BFI.31.45_2",
+                                                          "BFI.31.45_3","BFI.31.45_4","BFI.31.45_5",
+                                                          "BFI.46.60_1","BFI.46.60_2","BFI.46.60_3",
+                                                          "BFI.46.60_4","BFI.46.60_5","BFI.61.75_1",
+                                                          "BFI.61.75_2","BFI.61.75_3","BFI.61.75_4",
+                                                          "BFI.61.75_5","BFI.76.90_1","BFI.76.90_2",
+                                                          "BFI.76.90_3","BFI.76.90_4","BFI.76.90_5",
+                                                          "BFI.91.105_1","BFI.91.105_2","BFI.91.105_3",
+                                                          "BFI.91.105_4","BFI.91.105_5","BFI.106.120_1",
+                                                          "BFI.106.120_2","BFI.106.120_3",
+                                                          "BFI.106.120_4","BFI.106.120_5")],
+                         MLOCdata_IDmatched_qdata_missed)
 
-write.csv(qdata_uni_final,"CHN_retest_Q0804_MLOC.csv",row.names = F)
-
+write.csv(qdata_uni_final, here::here(data_dir,"CHN_retest_Q0804_MLOC.csv"), row.names = F)

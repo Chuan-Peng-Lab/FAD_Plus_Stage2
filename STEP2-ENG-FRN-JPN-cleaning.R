@@ -1,5 +1,4 @@
 rm(list = ls())
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_1_Standardized_Data")
 
 # install.packages("pacman") if not installed
 if (!requireNamespace('pacman', quietly = TRUE)) {
@@ -9,7 +8,11 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
 # using pacman for loading packages
 pacman::p_load(tidyverse, car, psych)
 
-#Sys.setlocale(category="LC_ALL",locale="en_US.UTF-8") #run this for mac OS setting the local language solving the problems in reading Chinese dataset
+# define the data dir within the R Proj
+data_dir <- here::here("3_2_1_Standardized_Data")
+
+# run this for mac OS setting the local language solving the problems in reading Chinese dataset
+# Sys.setlocale(category="LC_ALL",locale="en_US.UTF-8") 
 
 fadnames <- c("FD1","FD5","FD9","FD13","FD17",
               "SD2","SD6","SD10","SD14","SD18","SD22","SD24",
@@ -71,16 +74,16 @@ FAD_Plus_scorescalculate <- function(m){
 #where rearrranged the English version datasets from the original datasets from OSF
 
 
-ENG1.1 <- read.csv("ENG_Brian_1A.csv")
-ENG1.2 <- read.csv("ENG_Brian_1B.csv")
+ENG1.1 <- read.csv(here::here(data_dir,"ENG_Brian_1A.csv"))
+ENG1.2 <- read.csv(here::here(data_dir,"ENG_Brian_1B.csv"))
 
-ENG1.3 <- read.csv("ENG_Brian_1C.csv")
+ENG1.3 <- read.csv(here::here(data_dir,"ENG_Brian_1C.csv"))
 age <- ENG1.3[,"Age"]
 gender <- ENG1.3[,"Gender"]
 ENG1.3 <- cbind(age,gender,ENG1.3[,fadnames])
 
 
-ENG1.4 <- read.csv("ENG_Brian_2.csv")
+ENG1.4 <- read.csv(here::here(data_dir,"ENG_Brian_2.csv"))
 describe(ENG1.4) #which FW4 needs recode
 table(ENG1.4[,"FW4"])
 
@@ -96,28 +99,26 @@ ENG1.4[,"FW4"] <- recode13578_ENG1.4(ENG1.4[,"FW4"])
 table(ENG1.4$age)
 ENG1.4$age <- ENG1.4$age+17 #recode "age" with original data with 17 difference
 
+ENG2 <- read.csv(here::here(data_dir,"ENG_Lysanne.csv"))
 
-ENG2 <- read.csv("ENG_Lysanne.csv")
-
-
-ENG3.1 <- read.csv("ENG_Nadelhoffer_1.csv")
+ENG3.1 <- read.csv(here::here(data_dir,"ENG_Nadelhoffer_1.csv"))
 #table(ENG3.1[,"Check"]), base on SPSS info, where should select "Disagree" == 2
 ENG3.1 <- ENG3.1[which(ENG3.1[,"Check"]==2),]
 
 
-ENG3.2 <- read.csv("ENG_Nadelhoffer_2.csv")
+ENG3.2 <- read.csv(here::here(data_dir,"ENG_Nadelhoffer_2.csv"))
 #table(ENG3.2[,"Check"]), base on SPSS info, where should select "Disagree" == 2
 ENG3.2 <- ENG3.2[which(ENG3.2[,"Check"]==2),]
 
-ENG3.3 <- read.csv("ENG_Nadelhoffer_3.csv")
+ENG3.3 <- read.csv(here::here(data_dir,"ENG_Nadelhoffer_3.csv"))
 #table(ENG3.3[,"Check"]), base on SPSS info, the correct answer should be 2 (questions: the day before today and the day after)
 ENG3.3 <- ENG3.3[which(ENG3.3[,"Check"]==2),]
 
-ENG3.4 <- read.csv("ENG_Nadelhoffer_4.csv")
+ENG3.4 <- read.csv(here::here(data_dir,"ENG_Nadelhoffer_4.csv"))
 #table(ENG3.4[,"Check"]), base on SPSS info, the correct answer should be 9 or 2 (questions: the day before today and the day after)
 ENG3.4 <- ENG3.4[which(ENG3.4[,"Check"]==9),]
 
-ENG3.5 <- read.csv("ENG_Nadelhoffer_5.csv")
+ENG3.5 <- read.csv(here::here(data_dir,"ENG_Nadelhoffer_5.csv"))
 #table(ENG3.5[,"Check"]), base on SPSS info, the correct answer should be 24 selecting "Disagree"
 ENG3.5 <- ENG3.5[which(ENG3.5[,"Check"]==24),]
 
@@ -151,8 +152,7 @@ ENG_final <- cbind(NO,ENG)
 ENG_final_cleaned <- cleaning_OmissionSames(ENG_final)
 ENG_final_cleaned_scores <- FAD_Plus_scorescalculate(ENG_final_cleaned)
 
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
-write.csv(ENG_final_cleaned_scores,"ENG.csv",row.names=FALSE,fileEncoding ="UTF-8")
+write.csv(ENG_final_cleaned_scores,here::here("3_2_3_Save_points","ENG.csv"),row.names=FALSE,fileEncoding ="UTF-8")
 
 
 
@@ -161,8 +161,6 @@ write.csv(ENG_final_cleaned_scores,"ENG.csv",row.names=FALSE,fileEncoding ="UTF-
 ################################
 #French version study 1 only with FAD-Plus data, and study 2 dataset with BFI data, but this dataset with BFI first version 45 items, we continue to have the BFI data and dimensions' scores for now
 
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_1_Standardized_Data")
-
 names_BFI_FRN <- c( "BFI_1","BFI_2","BFI_3","BFI_4","BFI_5","BFI_6","BFI_7","BFI_8", "BFI_9" ,
                     "BFI_10","BFI_11","BFI_12", "BFI_13", "BFI_14","BFI_15" ,"BFI_16","BFI_17" ,"BFI_18", 
                     "BFI_19","BFI_20","BFI_21" ,"BFI_22","BFI_23" , "BFI_24","BFI_25", "BFI_26" , "BFI_27",
@@ -170,8 +168,8 @@ names_BFI_FRN <- c( "BFI_1","BFI_2","BFI_3","BFI_4","BFI_5","BFI_6","BFI_7","BFI
                     "BFI_37","BFI_38", "BFI_39","BFI_40","BFI_41" , "BFI_42" , "BFI_43", "BFI_44" ,"BFI_45",
                     "Extraversion","Agreabilite" , "Conscience", "EmotionsNegatives","Ouverture")
 
-FRN_1.1 <- read.csv("FRN_Study1.csv")
-FRN_1.2_BFI <- read.csv("FRN_Study2_BFI.csv")
+FRN_1.1 <- read.csv(here::here(data_dir,"FRN_Study1.csv"))
+FRN_1.2_BFI <- read.csv(here::here(data_dir,"FRN_Study2_BFI.csv"))
 
 FRN_data <- dplyr::bind_rows(FRN_1.1,FRN_1.2_BFI)
 FRN_data <- FRN_data[,c("gender","age",fadnames,names_BFI_FRN)]
@@ -186,9 +184,7 @@ anyNA(FRN_final_cleaned[,fadnames])
 
 FRN_final_cleaned_scores <- FAD_Plus_scorescalculate(FRN_final_cleaned)
 
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
-
-write.csv(FRN_final_cleaned_scores,"FRN.csv",row.names=FALSE,fileEncoding ="UTF-8")
+write.csv(FRN_final_cleaned_scores, here::here("3_2_3_Save_points","FRN.csv"),row.names=FALSE,fileEncoding ="UTF-8")
 
 
 ################################
@@ -200,8 +196,8 @@ write.csv(FRN_final_cleaned_scores,"FRN.csv",row.names=FALSE,fileEncoding ="UTF-
 #JPN_2: Watanabe version with LOC data
 setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_1_Standardized_Data")
 
-JPN_1_Goto2015 <- read.csv("JPN_1_Goto2015.csv") #this is the data from Goto (2015) only have FAD-Plus data with Goto translation version
-JPN_2_LOC2021 <- read.csv("JPN_2_LOC2021.csv") #two datasets in different versions with LOC data
+JPN_1_Goto2015 <- read.csv(here::here(data_dir,"JPN_1_Goto2015.csv")) #this is the data from Goto (2015) only have FAD-Plus data with Goto translation version
+JPN_2_LOC2021 <- read.csv(here::here(data_dir,"JPN_2_LOC2021.csv")) #two datasets in different versions with LOC data
 
 names_LOC_JPN <- c("LOC_1","LOC_2","LOC_3","LOC_4","LOC_5","LOC_6","LOC_7")
 JPN_1_Goto2021_LOC <- JPN_2_LOC2021[,c("age","gender",fadnames,names_LOC_JPN)]
@@ -222,14 +218,11 @@ JPN_1 <- cbind(NO,JPN_1)
 JPN_1_final_cleaned <- cleaning_OmissionSames(JPN_1)
 JPN_1_final_cleaned_scores <- FAD_Plus_scorescalculate(JPN_1_final_cleaned)
 
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
-
-write.csv(JPN_1_final_cleaned_scores,"JPN_1.csv",row.names=FALSE,fileEncoding ="UTF-8")
+write.csv(JPN_1_final_cleaned_scores, here::here("3_2_3_Save_points","JPN_1.csv"),row.names=FALSE,fileEncoding ="UTF-8")
 
 NO <- rep("JPN2",times=length(JPN_2[,1]))
 JPN_2 <- cbind(NO,JPN_2)
 JPN_2_final_cleaned <- cleaning_OmissionSames(JPN_2)
 JPN_2_final_cleaned_scores <- FAD_Plus_scorescalculate(JPN_2_final_cleaned)
 
-write.csv(JPN_2_final_cleaned_scores,"JPN_2.csv",row.names=FALSE,fileEncoding ="UTF-8")
-
+write.csv(JPN_2_final_cleaned_scores,here::here("3_2_3_Save_points","JPN_2.csv"),row.names=FALSE,fileEncoding ="UTF-8")

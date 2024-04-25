@@ -1,47 +1,189 @@
-#datacleanning of FAD-Plus-newstart
+# datacleanning of FAD-Plus-newstart
 #
 rm(list = ls())
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_1_Standardized_Data")
-
 # install.packages("pacman") if not installed
 if (!requireNamespace('pacman', quietly = TRUE)) {
       install.packages('pacman')
 }
 
 # using pacman for loading packages
-pacman::p_load(psych,stringr,CTT,dplyr,psych,lavaan,semPlot,semTools)
+pacman::p_load(tidyverse, psych, CTT, lavaan, semPlot, semTools) 
+
+# define the data dir within the R Proj
+data_dir <- here::here("3_2_1_Standardized_Data")
 
 # load data
-data_DZL <- read.csv("CHN_DZL.csv")
-data_LJG <- read.csv("CHN_LJG.csv")
-data_HCP_S <- read.csv("CHN_HCP_Student.csv")
-data_HCP_A <- read.csv("CHN_HCP_1_2.csv")
-re_data_HCP_A <- read.csv("CHN_retest_Q0804_MLOC.csv")
+data_DZL <- read.csv(here::here(data_dir,"CHN_DZL.csv"))
+data_LJG <- read.csv(here::here(data_dir,"CHN_LJG.csv"))
+data_HCP_S <- read.csv(here::here(data_dir,"CHN_HCP_Student.csv"))
+data_HCP_A <- read.csv(here::here(data_dir,"CHN_HCP_1_2.csv"))
+re_data_HCP_A <- read.csv(here::here(data_dir,"CHN_retest_Q0804_MLOC.csv"))
 
 #####
-### names_ori_used <- c("check.1.","check.2.","Q3.gender","Q4.age.","Q5.ethnic.groups.","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1.","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
+# names_ori_used <- c("check.1.","check.2.","Q3.gender","Q4.age.",
+# "Q5.ethnic.groups.","Q6.educational.atta.","Q7.SES.","Q8.objSES_1",
+# "Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad",
+# "FAD.Q1.","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6",
+# "FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12",
+# "FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18",
+# "FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24",
+# "FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2",
+# "BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1",
+# "BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5",
+# "BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4",
+# "BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3",
+# "BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2",
+# "BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1",
+# "BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5",
+# "BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4",
+# "BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3",
+# "BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2",
+# "BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1",
+# "BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5",
+# "BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4",
+# "BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3",
+# "BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3",
+# "MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4",
+# "MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1",
+# "MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1",
+# "MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1",
+# "MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
 #####
 
-names_ori_used <- c("check.1","check.2","Q1.ID","Q3.gender","Q4.age","Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
+names_ori_used <- c("check.1","check.2","Q1.ID","Q3.gender","Q4.age",
+                    "Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.",
+                    "Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad",
+                    "Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4",
+                    "FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10",
+                    "FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15",
+                    "FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20",
+                    "FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25",
+                    "FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2",
+                    "BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1",
+                    "BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5",
+                    "BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4",
+                    "BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3",
+                    "BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2",
+                    "BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1",
+                    "BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5",
+                    "BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4",
+                    "BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3",
+                    "BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2",
+                    "BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1",
+                    "BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5",
+                    "BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4",
+                    "BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3",
+                    "BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2",
+                    "MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3",
+                    "MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3",
+                    "MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3",
+                    "MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3",
+                    "MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
 
-names_ori_used_DZL <- c("check.1","check.2","Q2.name","Q3.gender","Q4.age","Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
+names_ori_used_DZL <- c("check.1","check.2","Q2.name","Q3.gender","Q4.age",
+                        "Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.",
+                        "Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad",
+                        "Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5",
+                        "FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11",
+                        "FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17",
+                        "FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23",
+                        "FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1",
+                        "BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5",
+                        "BFI.6.10._1","BFI.6.10._2","BFI.6.10._3", "BFI.6.10._4",
+                        "BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3",
+                        "BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2",
+                        "BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1",
+                        "BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5",
+                        "BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4",
+                        "BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3",
+                        "BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2",
+                        "BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1",
+                        "BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5",
+                        "BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4",
+                        "BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3",
+                        "BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2",
+                        "BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1",
+                        "MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2",
+                        "MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3",
+                        "MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4",
+                        "MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4",
+                        "MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
 
-names_retest_used <- c("Q1.ID","Q3.gender","Q4.age","Q5.ethnic.groups","Q6.educational.atta.","Q7.SES.","Q8.objSES_1","Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad","FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6","FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12","FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17","FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22","FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27","BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4","BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3","BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2","BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1","BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5","BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4","BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3","BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2","BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1","BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5","BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4","BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3","BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2","BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1","BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5","MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4","MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1","MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1","MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1","MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1","MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
+names_retest_used <- c("Q1.ID","Q3.gender","Q4.age","Q5.ethnic.groups",
+                       "Q6.educational.atta.","Q7.SES.","Q8.objSES_1",
+                       "Q9.subSES_1","Q10.abroad","Q11.abroad","Q12.abroad",
+                       "FAD.Q1","FAD.Q2.","FAD.Q3","FAD.Q4","FAD.Q5","FAD.Q6",
+                       "FAD.Q7","FAD.Q8","FAD.Q9","FAD.Q10","FAD.Q11","FAD.Q12",
+                       "FAD.Q13","FAD.Q14","FAD.Q15","FAD.Q16","FAD.Q17",
+                       "FAD.Q18","FAD.Q19","FAD.Q20","FAD.Q21","FAD.Q22",
+                       "FAD.Q23","FAD.Q24","FAD.Q25","FAD.Q26","FAD.Q27",
+                       "BFI.1.5._1","BFI.1.5._2","BFI.1.5._3","BFI.1.5._4",
+                       "BFI.1.5._5","BFI.6.10._1","BFI.6.10._2","BFI.6.10._3",
+                       "BFI.6.10._4","BFI.6.10._5","BFI.11.15._1","BFI.11.15._2",
+                       "BFI.11.15._3","BFI.11.15._4","BFI.11.15._5","BFI.16.20_1",
+                       "BFI.16.20_2","BFI.16.20_3","BFI.16.20_4","BFI.16.20_5",
+                       "BFI.21.25_1","BFI.21.25_2","BFI.21.25_3","BFI.21.25_4",
+                       "BFI.21.25_5","BFI.26.30_1","BFI.26.30_2","BFI.26.30_3",
+                       "BFI.26.30_4","BFI.26.30_5","BFI.31.45_1","BFI.31.45_2",
+                       "BFI.31.45_3","BFI.31.45_4","BFI.31.45_5","BFI.46.60_1",
+                       "BFI.46.60_2","BFI.46.60_3","BFI.46.60_4","BFI.46.60_5",
+                       "BFI.61.75_1","BFI.61.75_2","BFI.61.75_3","BFI.61.75_4",
+                       "BFI.61.75_5","BFI.76.90_1","BFI.76.90_2","BFI.76.90_3",
+                       "BFI.76.90_4","BFI.76.90_5","BFI.91.105_1","BFI.91.105_2",
+                       "BFI.91.105_3","BFI.91.105_4","BFI.91.105_5","BFI.106.120_1",
+                       "BFI.106.120_2","BFI.106.120_3","BFI.106.120_4","BFI.106.120_5",
+                       "MLOC.1.4_1","MLOC.1.4_2","MLOC.1.4_3","MLOC.1.4_4",
+                       "MLOC.5.8_1","MLOC.5.8_2","MLOC.5.8_3","MLOC.5.8_4","MLOC.9.12_1",
+                       "MLOC.9.12_2","MLOC.9.12_3","MLOC.9.12_4","MLOC.13.16_1",
+                       "MLOC.13.16_2","MLOC.13.16_3","MLOC.13.16_4","MLOC.17.20_1",
+                       "MLOC.17.20_2","MLOC.17.20_3","MLOC.17.20_4","MLOC.21.24_1",
+                       "MLOC.21.24_2","MLOC.21.24_3","MLOC.21.24_4")
 
-names_used <- c("datasetNO","check1","check2","ID","gender","age","ethnic","edu","SES","objSES","subSES","abroad","abroad_c","abroad_t","FD1","SD2","UP3","FW4","FD5","SD6","UP7","FW8","FD9","SD10","UP11","FW12","FD13","SD14","UP15","FW16","FD17","SD18","UP19","UP20","FW21","SD22","FW23","SD24","UP25","FW26","UP27",
-"BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10","BFI11","BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19","BFI20","BFI21","BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28","BFI29","BFI30","BFI31","BFI32","BFI33","BFI34","BFI35","BFI36","BFI37","BFI38","BFI39","BFI40","BFI41","BFI42","BFI43","BFI44","BFI45","BFI46","BFI47","BFI48","BFI49","BFI50","BFI51","BFI52","BFI53","BFI54","BFI55","BFI56","BFI57","BFI58","BFI59","BFI60",
-"MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9","MLOC10","MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17","MLOC18","MLOC19","MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
+names_used <- c("datasetNO","check1","check2","ID","gender","age","ethnic",
+                "edu","SES","objSES","subSES","abroad","abroad_c","abroad_t",
+                "FD1","SD2","UP3","FW4","FD5","SD6","UP7","FW8","FD9","SD10",
+                "UP11","FW12","FD13","SD14","UP15","FW16","FD17","SD18","UP19",
+                "UP20","FW21","SD22","FW23","SD24","UP25","FW26","UP27",
+                "BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10","BFI11",
+                "BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19","BFI20","BFI21",
+                "BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28","BFI29","BFI30","BFI31",
+                "BFI32","BFI33","BFI34","BFI35","BFI36","BFI37","BFI38","BFI39","BFI40","BFI41",
+                "BFI42","BFI43","BFI44","BFI45","BFI46","BFI47","BFI48","BFI49","BFI50","BFI51",
+                "BFI52","BFI53","BFI54","BFI55","BFI56","BFI57","BFI58","BFI59","BFI60",
+                "MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9",
+                "MLOC10","MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17",
+                "MLOC18","MLOC19","MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
 
 
-re_names_used <- c("datasetNO","ID","gender","age","ethnic","edu","SES","objSES","subSES","abroad","abroad_c","abroad_t","FD1","SD2","UP3","FW4","FD5","SD6","UP7","FW8","FD9","SD10","UP11","FW12","FD13","SD14","UP15","FW16","FD17","SD18","UP19","UP20","FW21","SD22","FW23","SD24","UP25","FW26","UP27",
-                   "BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10","BFI11","BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19","BFI20","BFI21","BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28","BFI29","BFI30","BFI31","BFI32","BFI33","BFI34","BFI35","BFI36","BFI37","BFI38","BFI39","BFI40","BFI41","BFI42","BFI43","BFI44","BFI45","BFI46","BFI47","BFI48","BFI49","BFI50","BFI51","BFI52","BFI53","BFI54","BFI55","BFI56","BFI57","BFI58","BFI59","BFI60",
-                   "MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9","MLOC10","MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17","MLOC18","MLOC19","MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
+re_names_used <- c("datasetNO","ID","gender","age","ethnic","edu","SES","objSES","subSES",
+                   "abroad","abroad_c","abroad_t","FD1","SD2","UP3","FW4","FD5","SD6","UP7",
+                   "FW8","FD9","SD10","UP11","FW12","FD13","SD14","UP15","FW16","FD17","SD18",
+                   "UP19","UP20","FW21","SD22","FW23","SD24","UP25","FW26","UP27",
+                   "BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10",
+                   "BFI11","BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19",
+                   "BFI20","BFI21","BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28",
+                   "BFI29","BFI30","BFI31","BFI32","BFI33","BFI34","BFI35","BFI36","BFI37",
+                   "BFI38","BFI39","BFI40","BFI41","BFI42","BFI43","BFI44","BFI45","BFI46",
+                   "BFI47","BFI48","BFI49","BFI50","BFI51","BFI52","BFI53","BFI54","BFI55",
+                   "BFI56","BFI57","BFI58","BFI59","BFI60",
+                   "MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9",
+                   "MLOC10","MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17",
+                   "MLOC18","MLOC19","MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
 
-FADnames <- c("FD1","SD2","UP3","FW4","FD5","SD6","UP7","FW8","FD9","SD10","UP11","FW12","FD13","SD14","UP15","FW16","FD17","SD18","UP19","UP20","FW21","SD22","FW23","SD24","UP25","FW26","UP27")
+FADnames <- c("FD1","SD2","UP3","FW4","FD5","SD6","UP7","FW8","FD9","SD10","UP11","FW12",
+              "FD13","SD14","UP15","FW16","FD17","SD18","UP19","UP20","FW21","SD22","FW23",
+              "SD24","UP25","FW26","UP27")
 
-BFInames <- c("BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10","BFI11","BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19","BFI20","BFI21","BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28","BFI29","BFI30","BFI31","BFI32","BFI33","BFI34","BFI35","BFI36","BFI37","BFI38","BFI39","BFI40","BFI41","BFI42","BFI43","BFI44","BFI45","BFI46","BFI47","BFI48","BFI49","BFI50","BFI51","BFI52","BFI53","BFI54","BFI55","BFI56","BFI57","BFI58","BFI59","BFI60")
+BFInames <- c("BFI1","BFI2","BFI3","BFI4","BFI5","BFI6","BFI7","BFI8","BFI9","BFI10","BFI11",
+              "BFI12","BFI13","BFI14","BFI15","BFI16","BFI17","BFI18","BFI19","BFI20","BFI21",
+              "BFI22","BFI23","BFI24","BFI25","BFI26","BFI27","BFI28","BFI29","BFI30","BFI31",
+              "BFI32","BFI33","BFI34","BFI35","BFI36","BFI37","BFI38","BFI39","BFI40","BFI41",
+              "BFI42","BFI43","BFI44","BFI45","BFI46","BFI47","BFI48","BFI49","BFI50","BFI51",
+              "BFI52","BFI53","BFI54","BFI55","BFI56","BFI57","BFI58","BFI59","BFI60")
 
-MLOCnames <- c("MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9","MLOC10","MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17","MLOC18","MLOC19","MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
+MLOCnames <- c("MLOC1","MLOC2","MLOC3","MLOC4","MLOC5","MLOC6","MLOC7","MLOC8","MLOC9","MLOC10",
+               "MLOC11","MLOC12","MLOC13","MLOC14","MLOC15","MLOC16","MLOC17","MLOC18","MLOC19",
+               "MLOC20","MLOC21","MLOC22","MLOC23","MLOC24")
 
 data_DZL_selected <- data_DZL[,names_ori_used_DZL]
 dataset_NO <- rep(1,times=length(data_DZL_selected[,1]))
@@ -120,7 +262,7 @@ CHN_data_val_checks[,BFInames] <- BFI_Num
 
 
 ###MLOC####
-#MLOC-data-7-points
+# MLOC-data-7-points
 
 MLOCdata <- CHN_data_val_checks[,MLOCnames]
 MLOCrecode <- function(v){
@@ -136,9 +278,6 @@ MLOCrecode <- function(v){
 
 MLOC_7_Num <- matrix(as.numeric(apply(MLOCdata, 2, MLOCrecode)),ncol = 24)
 CHN_data_val_checks[,MLOCnames] <- MLOC_7_Num
-
-
-
 
 
 cleaning_OmissionSames <- function(m,nombre){
@@ -183,11 +322,12 @@ showresponse <- function(v,m){
 lapply(dup_locs, showresponse,m=CHN_FAD_BFI_MLOC_cleaned)
 
 
-
-
-
 #根据重复的被试编号，或者被试填写的姓名进行，主要是时间顺序上的比对，选择需要删除的作答
-delete_loc <- c(dup_locs[[6]][2],dup_locs[[7]][1],dup_locs[[9]][2],dup_locs[[12]][2],dup_locs[[14]][c(1,2)],dup_locs[[15]][2],dup_locs[[16]][2],dup_locs[[18]][2],dup_locs[[19]][2],dup_locs[[24]][2], dup_locs[[26]][1],dup_locs[[27]][1],dup_locs[[28]][2],dup_locs[[29]][2])
+delete_loc <- c(dup_locs[[6]][2],dup_locs[[7]][1],dup_locs[[9]][2],
+                dup_locs[[12]][2],dup_locs[[14]][c(1,2)],dup_locs[[15]][2],
+                dup_locs[[16]][2],dup_locs[[18]][2],dup_locs[[19]][2],
+                dup_locs[[24]][2], dup_locs[[26]][1],dup_locs[[27]][1],
+                dup_locs[[28]][2],dup_locs[[29]][2])
 
 
 #showresponse(dup_locs[[29]],CHN_FAD_BFI_MLOC_cleaned)
@@ -247,16 +387,9 @@ FAD_Plus_scorescalculate <- function(m){
   return(allwithscores)
 }
 
-
-
 CHN_cleaned_scores <- FAD_Plus_scorescalculate(CHN_cleaned_nodup)
 
-
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
-
-write.csv(CHN_cleaned_scores,file = "CHN_230711.csv",row.names = F)
-
-
+write.csv(CHN_cleaned_scores,file = here::here("3_2_3_Save_points","CHN_230711.csv"),row.names = F)
 
 ### for retest data ####
 re_data_HCP_A_selected <- re_data_HCP_A[,names_retest_used]
@@ -265,20 +398,16 @@ re_dataset_NO <- rep(9,times=length(re_data_HCP_A_selected[,1]))
 re_data <- cbind(re_dataset_NO,re_data_HCP_A_selected)
 colnames(re_data) <- re_names_used
 
-
-
 re_FADdata <- re_data[,FADnames]
 dim(re_FADdata)
 re_FAD_Num <- matrix(as.numeric(
   apply(re_FADdata, 2, str_remove_all,pattern="[^0-9]")),ncol = 27)
 re_data[,FADnames] <- re_FAD_Num
 
-
 re_BFIdata <- re_data[,BFInames]
 dim(re_BFIdata)
 re_BFI_Num <- matrix(as.numeric(apply(re_BFIdata,2,BFIrecode)),ncol = 60)
 re_data[,BFInames] <- re_BFI_Num
-
 
 re_dup_locs <- unique(find_dup_loc(re_data[,"ID"]))
 
@@ -286,7 +415,4 @@ lapply(re_dup_locs, showresponse,m=re_data_cleaned)
 
 redata_scores <- FAD_Plus_scorescalculate(re_data)
 
-setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
-
-write.csv(redata_scores,file = "re_CHN_230804.csv",row.names = F)
-
+write.csv(redata_scores,file = here::here("3_2_3_Save_points","re_CHN_230804.csv"),row.names = F)

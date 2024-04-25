@@ -4,16 +4,22 @@
 
 # Set the environment for analysis
 rm(list = ls())
+
+# install.packages("pacman") if not installed
+if (!requireNamespace('pacman', quietly = TRUE)) {
+      install.packages('pacman')
+}
+
 curWD <- dirname(rstudioapi::getSourceEditorContext()$path)
 setwd(curWD)
 
+# pay attention to the message from biocManager, it will ask you to update the packages or not.
+if (!requireNamespace('Biobase', quietly = TRUE)) {
+      BiocManager::install("Biobase", force = TRUE)
+}
+
 # Load the necessary package
-
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("Biobase")
-library(NMF)
+pacman::p_load(BiocManager, Biobase, NMF)
 
 # Load data & filter useful columns
 load_data <- function(filename) {
@@ -27,12 +33,12 @@ load_data <- function(filename) {
   return(fad[, fadnames])
 }
 
-
-CHN_Clean <- load_data("../3_2_3_Save_points/CHN_Cleaned.csv")
-ENG_Clean <- load_data("../3_2_3_Save_points/ENG_Cleaned.csv")
-FRN_Clean <- load_data("../3_2_3_Save_points/FRN_Cleaned.csv")
-JPN_1_Clean <- load_data("../3_2_3_Save_points/JPN_1_Cleaned.csv")
-JPN_2_Clean <- load_data("../3_2_3_Save_points/JPN_2_Cleaned.csv")
+# need to check the file names
+CHN_Clean <- load_data(here::here("3_2_3_Save_points","CHN_Cleaned.csv"))
+ENG_Clean <- load_data(here::here("3_2_3_Save_points", "ENG_Cleaned.csv"))
+FRN_Clean <- load_data(here::here("3_2_3_Save_points", "FRN_Cleaned.csv"))
+JPN_1_Clean <- load_data(here::here("3_2_3_Save_points", "JPN_1_Cleaned.csv"))
+JPN_2_Clean <- load_data(here::here("3_2_3_Save_points", "JPN_2_Cleaned.csv"))
 
 # Function to perform NMF Analysis
 nmf_analysis <- function(data, data_name, title_prefix) {
@@ -74,15 +80,11 @@ nmf_analysis(JPN_1_Clean, "JPN_1_Clean", "FADplus_NMF")
 nmf_analysis(JPN_2_Clean, "JPN_2_Clean", "FADplus_NMF")
 
 
-
-
-
 ## test
 consensusmap(estim_data, annCol=data_t, labCol=NA, labRow=NA)
 
-
 ##
-Half_Clean <- load_data("halftestnmf.csv")
+Half_Clean <- load_data(here::here("3_2_3_Save_points","halftestnmf.csv"))
 
 ##
 data <- Half_Clean
@@ -93,8 +95,10 @@ title_prefix <- "FADplus_NMF"
 data_name <- "Half_Clean"
 
 res_data <- NMF::nmf(data_t, 4, nrun=500, seed=9527, .opt="vP31")
+
 #pdf(paste0(title_prefix, "_", data_name, "_4_components.pdf"))
 basismap(res_data, main = paste('4 components of', title_prefix))
+
 curr_plot <- recordPlot()
 pdf(paste0(title_prefix, "_", data_name, "_4_components.pdf"))
 replayPlot(curr_plot)

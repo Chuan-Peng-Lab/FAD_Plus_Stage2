@@ -1,5 +1,4 @@
 rm(list = ls())
-# setwd("~/Desktop/FAD_New_Start/3_Stage2/3_2_Analayses/3_2_3_Save_points")
 
 # install.packages("pacman") if not installed
 if (!requireNamespace('pacman', quietly = TRUE)) {
@@ -173,7 +172,7 @@ correlationsFAD <- lapply(ALLdata,forcorrelationsFAD)
 #
 #
 for (i in 1:length(correlationsFAD)) {
-  textnames <- paste("correlations",i,".txt",sep = "")
+  textnames <- paste(here::here("3_2_3_Save_points","correlations"), i, ".txt", sep = "")
   write.table(correlationsFAD[[i]],textnames)
 }
 
@@ -408,14 +407,9 @@ forcfaFAD_model4 <- function(m){
 cfaFAD_model4 <- lapply(ALLdata, forcfaFAD_model4)
 
 for (i in 1:length(cfaFAD_model4)) {
-  textnames <- paste("cfas",i,".txt",sep = "")
+  textnames <- paste(here::here("3_2_3_Save_points","cfas"),i,".txt",sep = "")
   write.table(cfaFAD_model4[[i]],textnames)
 }
-
-
-
-
-
 
 ########################################
 ###### Measurement Invariance ##########

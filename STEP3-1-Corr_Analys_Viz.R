@@ -1,7 +1,5 @@
 rm(list = ls())
 
-setwd("E:/Psy_Zchhh/NNU/FAD_New_Start/FAD_submission/final_submission/FAD_R1_0912/FAD_R1_0912/Stage 2-2/3_2_Analayses/3_2_Analayses/3_2_3_Save_points")
-
 # install.packages("pacman") if not installed
 if (!requireNamespace('pacman', quietly = TRUE)) {
       install.packages('pacman')
@@ -86,7 +84,7 @@ Eng_corr_MLOC2FAD[Eng_corr_MLOC2FAD$Study == "MLOC_C" & Eng_corr_MLOC2FAD$SubStu
 
 
 
-
+# load data
 CHN <- read.csv(here::here("3_2_3_Save_points","CHN_230711.csv"))
 re_CHN <- read.table(here::here("3_2_3_Save_points","MLOC6_FAD_filtered.txt"))
 ENG <- read.csv(here::here("3_2_3_Save_points","ENG.csv"))
