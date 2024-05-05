@@ -10,18 +10,20 @@ if (!requireNamespace('pacman', quietly = TRUE)) {
       install.packages('pacman')
 }
 
+if (!requireNamespace('NMF', quietly = TRUE)) {
+      install.packages('NMF', version = "0.27", repos = 'http://cran.r-project.org')
+}
 
 # pay attention to the message from biocManager, it will ask you to update the packages or not.
 # if (!require("BiocManager", quietly = TRUE))
 #   install.packages("BiocManager")
 
-#   BiocManager::install("BiocParallel")
 #   BiocManager::install("NMF")
 #   BiocManager::install("Biobase")
 
 
 # Load the necessary package
-pacman::p_load(BiocManager, Biobase, NMF，doParallel，foreach)
+pacman::p_load(BiocManager, Biobase, NMF, doParallel, foreach)
 
 # Load data & filter useful columns
 load_data <- function(filename) {
@@ -64,13 +66,19 @@ nmf_analysis <- function(data, data_name, title_prefix, nruns) {
   # register(bp_param)
 
   res_data <- NMF::nmf(data_t, 
-                       4, 
+                       rank = 4,
+                       method = "brunet",
                        nrun=nruns, 
-                       seed=777)
+                       seed=777,
+                       #.opt='v',
+                       .options = list(backend = "doParallel",
+                                       num_threads = 6,
+                                       verbose = TRUE)
+                       )
   
   #pdf(paste0(title_prefix, "_", data_name, "_4_components.pdf"))
-  basismap(res_data, main = paste('4 components of', title_prefix))
-  curr_plot <- recordPlot()
+  NMF::basismap(res_data, main = paste('4 components of', title_prefix))
+  grDevices::curr_plot <- recordPlot()
   pdf(paste0(title_prefix, "_", data_name, "_4_components.pdf"))
   replayPlot(curr_plot)
   dev.off()
