@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN R -e "install.packages('pacman', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('here', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "install.packages('devtools', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('tidyverse', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('data.table', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('psych', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
@@ -36,15 +37,16 @@ RUN R -e "install.packages('car', repos = 'https://mirrors.tuna.tsinghua.edu.cn/
 RUN R -e "install.packages('Matrix', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages(c('CTT','ltm', 'mirt', 'lordif'), repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages(c('lavaan','semPlot','semTools'), repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
-RUN R -e "install.packages('biocManager', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
-RUN R -e "install.packages(c('foreach', 'parallel', 'iterators', 'doParallel'), repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
-RUN R -e "install.packages(c('BiocManager', 'Biobase'), repos = 'http://cran.us.r-project.org')"
-RUN R -e "install.packages('NMF', version = "0.27", repos = 'http://cran.us.r-project.org')"
+RUN R -e "install.packages(c('foreach', 'parallel', 'iterators', 'doParallel','cluster'), repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "install.packages('gplots', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "install.packages('RcppProgress', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+# RUN R -e "install.packages(c('BiocManager', 'Biobase'), repos = 'http://cran.us.r-project.org')"
+# RUN R -e "install.packages('NMF', version = "0.27", repos = 'http://cran.us.r-project.org')"
 # RUN R -e "install.packages('cmdstanr', repos = c('https://mc-stan.org/r-packages/', getOption('repos')))"
 
 # install r package from github
 # RUN R -e "install.packages('devtools', repos = 'http://cran.us.r-project.org')"
-# RUN R -e "devtools::install_github('hauselin/hausekeep')"
+RUN R -e "devtools::install_github('linxihui/NNLM@65303c99d1059ca90cdbabeaf872521717037255')"
 # RUN R -e "devtools::install_github('yuki-961004/yukiSH')"
 # RUN R -e "devtools::install_github('yuki-961004/yukiBP@cdb5b0764438306aefe2687b7c1993a3e8059161')"
 
