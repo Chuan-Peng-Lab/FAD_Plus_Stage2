@@ -1,5 +1,6 @@
 rm(list = ls())
 
+# options(repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/") # using the fastest mirror
 # install.packages("pacman") if not installed
 if (!requireNamespace('pacman', quietly = TRUE)) {
       install.packages('pacman')

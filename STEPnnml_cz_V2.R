@@ -1,3 +1,4 @@
+# options(repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/")
 # install.packages('devtools', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')
 # library(devtools)
 # install.packages('RcppProgress', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')
