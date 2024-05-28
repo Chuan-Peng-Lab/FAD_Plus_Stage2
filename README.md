@@ -28,7 +28,7 @@ Folder: "3_2_3_SAVE_points" - cleaned datasets and results tables
 
 ## Use docker image for macOS
 
-1. Pull the docker image from `hcp4715/` or build the docker image using `Dockerfile`
+1. Pull the docker image from `hcp4715/rdock` or build the docker image using `Dockerfile`
    pull the docker image: `docker pull hcp4715/rdock:fadpls`
    build the docker image: 
    - for apple chip machine: `docker buildx build -t hcp4715/rdock:fadpls -f Dockerfile.arm64 .`

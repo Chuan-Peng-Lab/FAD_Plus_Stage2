@@ -27,7 +27,6 @@ RUN R -e "install.packages('devtools', repos = 'https://mirrors.tuna.tsinghua.ed
 RUN R -e "install.packages('tidyverse', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('data.table', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('psych', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
-RUN R -e "install.packages('car', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 # reinstall Matrix to the 1.6.5, instead of latest version that requires R 4.4
 RUN R -e "remove.packages('Matrix', lib='/usr/local/lib/R/library')"
 RUN R -e "devtools::install_version('Matrix', version = '1.6.5', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
@@ -36,9 +35,13 @@ RUN R -e "install.packages(c('lavaan','semPlot','semTools'), repos = 'https://mi
 RUN R -e "install.packages(c('foreach', 'parallel', 'iterators', 'doParallel','cluster'), repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('gplots', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 RUN R -e "install.packages('RcppProgress', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "pacman::p_install('car', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 
 # install r package from github
 RUN R -e "devtools::install_github('linxihui/NNLM@65303c99d1059ca90cdbabeaf872521717037255')"
+
+RUN R -e "pacman::p_install('cowplot', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "devtools::install_github('zdebruine/RcppML@5449a5b479908f40f56cf911f11e0a7e156d207f', upgrade = TRUE)"
 
 # add data
 # COPY /example/Script_example.Rmd /home/rstudio/example/

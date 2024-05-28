@@ -50,7 +50,11 @@ RUN R -e "install.packages('RcppProgress', repos = 'https://mirrors.tuna.tsinghu
 RUN R -e "devtools::install_github('linxihui/NNLM@65303c99d1059ca90cdbabeaf872521717037255')"
 # RUN R -e "devtools::install_github('yuki-961004/yukiSH')"
 # RUN R -e "devtools::install_github('yuki-961004/yukiBP@cdb5b0764438306aefe2687b7c1993a3e8059161')"
-
+RUN R -e "pacman::p_install('car', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "pacman::p_install('cowplot', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
+RUN R -e "devtools::install_github('zdebruine/RcppML@5449a5b479908f40f56cf911f11e0a7e156d207f', upgrade = TRUE)"
+# re-install lme4
+RUN R -e "pacman::p_install('lme4', repos = 'https://mirrors.tuna.tsinghua.edu.cn/CRAN/')"
 # RUN R -e "install.packages('tinytex', repos = 'http://cran.us.r-project.org')"
 # RUN R -e "tinytex::install_tinytex()"
 # RUN R -e "install.packages('papaja', repos = 'http://cran.us.r-project.org')"
