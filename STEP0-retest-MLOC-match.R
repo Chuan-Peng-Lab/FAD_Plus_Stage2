@@ -138,8 +138,8 @@ qdata_selected <- read.csv(here::here(data_dir, "Q0804.csv")) %>%
       dplyr::filter(check.1 == "不合理" & check.2 == "6") %>%
       dplyr::select(tidyselect::all_of(names_ori_used))
 
-qdata_checked <- qdata[which(qdata[,"check.1"]=="不合理"& qdata[,"check.2"]=="6"),]
-qdata_selected <- qdata_checked[, names_ori_used]
+# qdata_checked <- qdata[which(qdata[,"check.1"]=="不合理"& qdata[,"check.2"]=="6"),]
+# qdata_selected <- qdata_checked[, names_ori_used]
 
 find_dup_loc(qdata_selected[,"Q1.ID"])
 q_dup_ID <- unique(find_dup_loc(qdata_selected[,"Q1.ID"]))
