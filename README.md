@@ -13,18 +13,17 @@
 
 <https://osf.io/umhvp>
 
+Preprint: https://osf.io/nk358
+
 ## Folder structure of this repo
 
-`STEP0-retest-MLOC-match.R`: merge the data for the retest MLOC CHN dataset;
+- Note: the code here can be run locally, but need to be re-checked by external rater.
 
-`STEP1-CHN-cleaning.R`: preprocess the newly collected CHN data, calculations of FAD_Plus scores & basic analysis;
+`STEP0-preprocessing.R`: preprocessing all data;
 
-`STEP2-ENG-FRN-JPN-cleaning`: preprocessing ENG, FRN, and JPN data, calculations of FAD_Plus scores & basic analysis; Note the data from these languages are already cleaned in the previous stage;
+`STEP1-FAD-PLUS_Analyses_combined.R`: all analyses.
 
-`STEP3-FAD-PLUS_Analysis`: all analyses as reported in our stage 2 RR report.
-
-Folder: "3_2_3_SAVE_points" - cleaned datasets and results tables
-
+Folder: `3_2_3_SAVE_points` - cleaned datasets and results tables
 
 ## Use docker image for macOS
 

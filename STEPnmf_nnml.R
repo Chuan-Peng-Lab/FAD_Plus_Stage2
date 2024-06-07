@@ -5,7 +5,7 @@ setwd(curWD)
 
 options(repos = "https://mirrors.tuna.tsinghua.edu.cn/CRAN/") # using the fastest mirror
 
-remotes::install_github("zdebruine/RcppML")
+# remotes::install_github("zdebruine/RcppML")
 
 # Load necessary libraries
 # library(devtools)
